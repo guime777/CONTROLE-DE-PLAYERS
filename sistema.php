@@ -85,7 +85,7 @@ $result_players = $conexao->query($sql_players);
                     <th scope="col">CPF</th>
                     <th scope="col">Nick</th>
                     <th scope="col">Cidade</th>
-                    <th scope="col">...</th>
+                    <th scope="col">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -130,7 +130,7 @@ $result_players = $conexao->query($sql_players);
                     <th scope="col">CPF</th>
                     <th scope="col">Nick</th>
                     <th scope="col">Cidade</th>
-                    <th scope="col">...</th>
+                    <th scope="col">Ações</th>
                 </tr>
             </thead>
             <tbody>
