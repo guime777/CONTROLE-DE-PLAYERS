@@ -1,154 +1,53 @@
 <?php
 if (isset($_POST['submit'])) {
-    // print_r('Nome: ' . $_POST['nome']);
-    //  print_r('<br>');
-    //  print_r('Email: ' . $_POST['email']);
-    // print_r('<br>');
-    //  print_r('Telefone: ' . $_POST['telefone']);
-    // print_r('<br>');
-    // print_r('Sexo: ' . $_POST['genero']);
-    // print_r('<br>');
-    //  print_r('Data de nascimento: ' . $_POST['data_nascimento']);
-    // print_r('<br>');
-    // print_r('Cidade: ' . $_POST['cidade']);
-    // print_r('<br>');
-    // print_r('Estado: ' . $_POST['estado']);
-    //  print_r('<br>');
-    //  print_r('Endereço: ' . $_POST['endereco']);
-
     include_once('config.php');
 
-    $nome = $_POST['nome'];
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
-    $telefone = $_POST['telefone'];
+    $nome = trim($_POST['nome']);
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $senha = trim($_POST['senha']);
+    $telefone = trim($_POST['telefone']);
     $sexo = $_POST['genero'];
     $data_nasc = $_POST['data_nascimento'];
-    $cpf = $_POST['cpf'];
-    $nick = $_POST['nick'];
-    $cidade = $_POST['cidade'];
+    $cpf = trim($_POST['cpf']);
+    $nick = trim($_POST['nick']);
+    $cidade = trim($_POST['cidade']);
 
-    $result = mysqli_query($conexao, "INSERT INTO usuarios (nome,email,senha,telefone,sexo,data_nasc,cpf,nick,cidade) 
-    VALUES('$nome', '$email','$senha', '$telefone', '$sexo', '$data_nasc', '$cpf', '$nick', '$cidade')");
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        die("Email inválido.");
+    }
 
-    header('Location: sistema.php');
+    $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+
+    $stmt = $conexao->prepare("INSERT INTO usuarios (nome, email, senha, telefone, sexo, data_nasc, cpf, nick, cidade) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssssss", $nome, $email, $senha_hash, $telefone, $sexo, $data_nasc, $cpf, $nick, $cidade);
+
+    if ($stmt->execute()) {
+        $novo_usuario_id = $stmt->insert_id; 
+
+        session_start();
+        $_SESSION['user_id'] = $novo_usuario_id; 
+        $_SESSION['user_email'] = $email; 
+        $_SESSION['user_nome'] = $nome; 
+
+        header('Location: sistema.php?success=1');
+        exit(); 
+    } else {
+        echo "Erro ao cadastrar: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conexao->close();
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario | Usuarios </title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-image: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71));
-        }
-
-        .box {
-            color: white;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.6);
-            padding: 15px;
-            border-radius: 15px;
-            width: 30%;
-
-        }
-
-        fieldset {
-            border: 3px solid dodgerblue;
-        }
-
-        legend {
-            border: 1px solid dodgerblue;
-            padding: 10px;
-            text-align: center;
-            background-color: dodgerblue;
-            border-radius: 8px;
-
-        }
-
-        .inputBox {
-            position: relative;
-        }
-
-        .inputUser {
-            background: none;
-            border: none;
-            border-bottom: 1px solid white;
-            outline: none;
-            color: white;
-            font-size: 15px;
-            width: 100%;
-            letter-spacing: 2px;
-
-        }
-
-        .labelInput {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            pointer-events: none;
-            transition: .5px;
-        }
-
-        .inputUser:focus~.labelInput,
-        .inputUser:valid~.labelInput {
-            top: -20px;
-            font-size: 12px;
-            color: dodgerblue;
-
-        }
-
-        #data_nascimento {
-            border: none;
-            padding: 8px;
-            border-radius: 10px;
-            outline: none;
-            font-size: 15px;
-
-        }
-
-        #submit {
-            background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
-            width: 100%;
-            border: none;
-            padding: 15px;
-            color: white;
-            font-size: 15px;
-            cursor: pointer;
-            border-radius: 10px;
-
-        }
-
-        #submit:hover {
-            background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
-        }
-
-        .inputBack:hover {
-            background-color: #ff6961;
-        }
-
-        .inputBack {
-            background-color: red;
-            margin-top: 10px;
-            width: 100%;
-            border: none;
-            padding: 15px;
-            color: white;
-            font-size: 15px;
-            cursor: pointer;
-            border-radius: 10px;
-        }
-    </style>
+    <title>Formulario | Usuarios</title>
+    <link rel="stylesheet" href="css/formulario.css">
 </head>
-
 <body>
     <div class="box">
         <form action="formulario.php" method="POST">
@@ -157,7 +56,7 @@ if (isset($_POST['submit'])) {
                 <br>
                 <div class="inputBox">
                     <input type="text" name="nome" id="nome" class="inputUser" required>
-                    <label for="name" class="labelInput">Nome Completo</label>
+                    <label for="nome" class="labelInput">Nome Completo</label>
                 </div>
                 <br>
                 <div class="inputBox">
@@ -208,5 +107,4 @@ if (isset($_POST['submit'])) {
         </form>
     </div>
 </body>
-
 </html>

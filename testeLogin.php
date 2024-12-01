@@ -1,39 +1,43 @@
 <?php
-session_start();
-//print_r($_REQUEST);
-if(isset($_POST["submit"]) && !empty($_POST['email']) && !empty($_POST['senha']))
-{
-// acessa 
-include_once('config.php');
-$email = $_POST['email'];
-$senha = $_POST['senha'];
- 
-//print_r('Email: ' . $email);
-//print_r('<br>');
-//print_r('Senha: ' . $senha);
+session_start(); 
 
-$sql = "SELECT *FROM usuarios WHERE email = '$email' and senha = '$senha' "; 
+if (isset($_POST["submit"]) && !empty($_POST['email']) && !empty($_POST['senha'])) {
+    include_once('config.php'); 
 
-$result = $conexao->query($sql);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 
-//print_r($sql);
-//print_r($result);
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['error'] = "Formato de email inválido.";
+        header('Location: login.php'); 
+        exit(); 
+    }
 
-if(mysqli_num_rows($result) < 1)
-{
-    unset($_SESSION['email']);
-    unset($_SESSION['senha']);
-    header('Location: login.php');
+    $stmt = $conexao->prepare("SELECT id, senha FROM usuarios WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows < 1) {
+        $_SESSION['error'] = "Usuário não encontrado.";
+        header('Location: login.php'); 
+        exit(); 
+    } else {
+        $usuario = $result->fetch_assoc();
+        
+        if (password_verify($_POST['senha'], $usuario['senha'])) {
+            $_SESSION['user_id'] = $usuario['id'];
+            $_SESSION['email'] = $email; 
+            header('Location: sistema.php'); 
+            exit(); 
+        } else {
+            $_SESSION['error'] = "Senha incorreta.";
+            header('Location: login.php'); 
+            exit(); 
+        }
+    }
+} else {
+    $_SESSION['error'] = "Por favor, preencha todos os campos.";
+    header('Location: login.php'); 
+    exit(); 
 }
-else{
-    $_SESSION['email']= $email;
-    $_SESSION['senha']= $senha;
-    header('Location: sistema.php');
-}
-}
-else
-{
-    header('Location: login.php');
-}
-
 ?>

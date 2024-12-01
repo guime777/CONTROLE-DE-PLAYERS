@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71));
+    padding: 20px;
+}
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+    margin: auto;
+}
+h1 {
+    text-align: center;
+}
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+select, input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #45a049;
+}

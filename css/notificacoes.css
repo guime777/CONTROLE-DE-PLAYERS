@@ -1,0 +1,11 @@
+body {
+    background: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71));
+    color: white;
+    text-align: center;
+}
+.notificacao {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}

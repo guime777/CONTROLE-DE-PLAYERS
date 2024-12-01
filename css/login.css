@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(to right, rgb(20,147,220), rgb(17,54,71));
+}
+div {
+    background-color: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 80px;
+    border-radius: 15px;
+    color: white;
+}
+input {
+    padding: 15px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+}
+.inputSubmit {
+    background-color: dodgerblue;
+    border: none;
+    padding: 15px;
+    width: 100%;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+.inputBack {
+    background-color: red;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    color: white;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+}
+.inputSubmit:hover {
+    background-color: deepskyblue;
+}
+.inputBack:hover {
+    background-color: #ff6961;
+}
+.error-message {
+    color: white;
+    background-color: rgba(255, 0, 0, 0.8); 
+    border: 1px solid red; 
+    border-radius: 5px; 
+    padding: 10px; 
+    margin-bottom: 15px; 
+    text-align: center; 
+}
